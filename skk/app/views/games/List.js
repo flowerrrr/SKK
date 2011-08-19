@@ -1,6 +1,6 @@
 App.views.GamesList = Ext.extend(Ext.Panel, {
     initComponent: function(){
-        var actionButton, addButton, titlebar, list;
+        var actionButton, addButton, titlebar, playerbar, list;
 		
 		actionButton = {
 			itemId: 'actionButton',
@@ -27,18 +27,58 @@ App.views.GamesList = Ext.extend(Ext.Panel, {
             items: [ actionButton, { xtype: 'spacer' }, addButton ]
         };
 
+        playerbar = {
+            dock: 'top',
+            xtype: 'panel',
+            html: (function() {
+				var s = '<div class="x-list-header">';
+				for(var i = 1; i <= 4; i++) {
+					var player = App.stores.tables.getAt(0).data['p' + i];
+					s += '<div class="score p' + i + ' header">' + player + '</div>';
+				}
+				s += '</div>';
+				return s;
+			})(),
+        };
+
         list = {
             xtype: 'list',
-            itemTpl: '{type}, {score}, {win}, {player}',
+            itemTpl: new Ext.XTemplate('<tpl for="[1,2,3,4]"><div class="score p{#}">{[App.scoreboard.getPlayerScore(xindex, parent)]}</div></tpl>'),
+			emptyText: '<div class="emptyText">Klicken Sie auf + um ein neues Spiel einzutragen.</div>',
             store: App.stores.games,
 			listeners: {
 				scope: this,
-				itemtap: this.onItemTapAction
-			}
+				itemtap: this.onItemTapAction,
+				afterrender : function(cmp){
+				   cmp.refresh();
+				}				
+			},
+			grouped: true,
+			groupTpl : [
+				'<tpl for=".">',
+					'<div class="x-list-group x-group-{id}">',
+						'<h3 class="x-list-header">{[App.getListHeader()]}</h3>',
+						'<div class="x-list-group-items">',
+							'{items}',
+						'</div>',
+					'</div>',
+				'</tpl>',
+			],
+			getHeader: function() {
+				var s = '';
+				for(var i = 1; i <= 4; i++) {
+					var player = App.stores.tables.getAt(0).data['p' + i];
+					s += '<div class="score p' + i + ' header">' + player + '</div>';
+				}
+				s += '<div style="clear:both;" ></div>';
+				return s;
+			},
         };
+		
+		App.getListHeader = list.getHeader;
 
         Ext.apply(this, {
-            html: 'placeholder',
+            html: 'If you see this something is wrong.',
             layout: 'fit',
             dockedItems: [titlebar],
             items: [list]
@@ -78,16 +118,18 @@ App.views.ActionSheet = Ext.extend(Ext.ActionSheet, {
         Ext.apply(this, {
 			items: [
 				{
-					text: 'Alle Daten l&ouml;schen',
+					text: 'Alle Spiele l&ouml;schen',
 					ui  : 'decline',
-					handler: this.onClearAllDataHandler
+					handler: this.onClearAllDataHandler,
+					// hidden: App.store.games.data.length()
 				},
 				{
-					text: 'Spieler hinzuf&uuml;gen',
-					handler: this.onAddPlayerHandler
+					text: 'Spieler bearbeiten',
+					handler: this.onEditPlayerHandler
 				},
 				{
 					text: 'Abbrechen',
+					ui: 'cancel',
 					handler: function() { sheet.hide(); }
 				}
 			]
@@ -98,18 +140,21 @@ App.views.ActionSheet = Ext.extend(Ext.ActionSheet, {
 	},
 
 	onClearAllDataHandler: function(btn, evt) {
-		Ext.Msg.confirm('Confirmation', 'Clear all data?', function(button) {
+		Ext.Msg.confirm('Achtung', 'Alle Spiele l&ouml;schen?', function(button) {
 			sheet.hide();
 			if(button == 'yes') {
-				App.stores.games.data.clear();
-				// App.views.gamesList.list.update();
+				App.stores.games.each(function(rec) { App.stores.games.remove(rec); });
+				App.stores.games.sync();
 			}
 		});
 	},
 	
-	onAddPlayerHandler: function(btn, evt) {
+	onEditPlayerHandler: function(btn, evt) {
 		sheet.hide();
-		alert("Function not implemented!");
+		Ext.dispatch({
+			controller: 'Tables',
+			action: 'editForm',
+		});
 	}
 });
 

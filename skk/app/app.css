@@ -1,0 +1,53 @@
+.emptyText {
+	height:200px;  
+    display:-webkit-box;
+    -webkit-box-orient: horizontal;        
+    -webkit-box-align:center;
+    -webkit-box-pack:center;    
+	color: #999;
+	text-align: center;
+}
+
+
+.score {
+	width: 25%;
+	float: left;
+	text-align: center;
+}
+
+.game-type-buttons, .win-lose-buttons {
+	margin-bottom: 10px;
+}
+
+.game-type-buttons  .x-button {
+	width: 33.333%;
+}
+
+.win-lose-buttons .x-button {
+	width: 50%;
+}
+
+.game-data-list  .x-panel-body {
+	padding-left: 0px;
+	padding-right: 0px;
+	padding-top: 0px;
+	padding-bottom: 0px;
+}
+
+
+.checkboxfield {
+	width: 70%;
+}
+
+.checkboxfield .x-input-checkbox {
+	
+}
+
+.numberfield {
+	width: 30%;
+	padding-left: 20px;
+}
+
+.score-panel {
+	margin-top: 10px;
+}
