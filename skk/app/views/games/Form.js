@@ -31,6 +31,30 @@ App.views.GamesForm = Ext.extend(Ext.form.FormPanel, {
             items: [{xtype: 'spacer'}, saveButton]
         };
 		
+		var gameDataList = function() {
+		
+			var gameData = function(nr) {
+				return {
+					id: 'gameData' + nr,
+					items: [ { 
+						label: eval('App.stores.tables.getAt(0).data.p' + nr),
+						xtype: 'checkboxfield',
+						name: 'player_' + nr,
+					},
+					{
+						xtype: 'numberfield',
+						name: 'amount_' + nr
+					}
+					]};
+			}
+		
+			var items = [];
+			for(i = 1; i <= 4; i++) {
+				items.push(gameData(i));
+			}
+			return items;
+		};
+		
 		fields = [
 			{
 				xtype: 'hiddenfield',
@@ -61,7 +85,7 @@ App.views.GamesForm = Ext.extend(Ext.form.FormPanel, {
 				label: 'Spielwert'
 			},
 			{
-				html: 'Spieler'
+				items: gameDataList()
 			},
 			{
 				xtype: 'hiddenfield',
@@ -98,8 +122,16 @@ App.views.GamesForm = Ext.extend(Ext.form.FormPanel, {
 
         App.views.GamesForm.superclass.initComponent.call(this);
     },
-	
+		
+	/**
+	 * Need to push values to segmented buttons and gameData section
+	 */
 	load: function(model) {
+		this.reset();
+		App.views.GamesForm.superclass.load.call(this, model);
+		
+		pushModel
+
 		var setButton = function(id, pressed) {
 			var btn = Ext.getCmp(id);
 			// when called for the first time the attr. el is undefined.
@@ -109,8 +141,7 @@ App.views.GamesForm = Ext.extend(Ext.form.FormPanel, {
 				btn.pressed = pressed;
 			}
 		};
-		// need to update segmented buttons.
-		App.views.GamesForm.superclass.load.call(this, model);
+
 		var buttons = Ext.getCmp('winLoseButtons');
 		buttons.setPressed('winLoseTrue', false, true);
 		buttons.setPressed('winLoseFalse', false, true);
@@ -126,6 +157,20 @@ App.views.GamesForm = Ext.extend(Ext.form.FormPanel, {
 		if (model.getType() != "") {
 			setButton(model.getType(), true);
 		}
+		
+		// push values to gameData section
+		var updateGameData = function(nr) {
+			var el = Ext.getCmp('gameData' + nr);
+			var gameData = model.data['gameDataP' + nr];
+			// set checkbox
+			if (gameData.data.isPlayer == true) {
+				el.items.getAt(0).check();
+			}
+			// set amount
+			el.items.getAt(1).setValue(gameData.data.amount);
+		};
+		
+		for(i = 1; i <= 4; i++) { updateGameData(i); }
 	},
 	
 	onGameTypeHandler: function(btn, evt) {

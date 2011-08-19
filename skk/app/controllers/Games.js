@@ -25,7 +25,7 @@ Ext.regController('Games', {
 
 	update: function(params) {
 		params.record.set(params.data);
-		this.store.save(params.data);
+		params.record.save();
 		this.index();
 	}
 });

@@ -1,0 +1,8 @@
+.emptyText {
+	height:200px;  
+    display:-webkit-box;
+    -webkit-box-orient: horizontal;        
+    -webkit-box-align:center;
+    -webkit-box-pack:center;    
+	color: #999;
+}
