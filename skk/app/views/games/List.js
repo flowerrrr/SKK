@@ -31,6 +31,7 @@ App.views.GamesList = Ext.extend(Ext.Panel, {
             xtype: 'list',
             itemTpl: new Ext.XTemplate('<tpl for="[1,2,3,4]"><div class="score p{#}">{[App.scoreboard.getPlayerScore(xindex, parent)]}</div></tpl>'),
 			emptyText: '<div class="emptyText">Klicken Sie auf + um ein neues Spiel einzutragen.</div>',
+			selectedItemCls: '',
             store: App.stores.games,
 			listeners: {
 				scope: this,
