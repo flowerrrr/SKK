@@ -4,7 +4,7 @@ Ext.regController('Games', {
     index: function(params) {
 		// scroll to end of list
         App.views.viewport.reveal('gamesList');
-		if (params.scrollToBottom) {
+		if (params && params.scrollToBottom) {
 			var list = Ext.getCmp('gamesListList');
 			list.scroller.updateBoundary();
 			list.scroller.scrollTo({x: 0, y:list.scroller.size.height}, true);
@@ -33,6 +33,6 @@ Ext.regController('Games', {
 		params.record.setValues(params.data);
 		App.scoreboard.clearCache(params.record.data.nr);
 		params.record.save();
-		this.index({ scrollToBottom: true });
+		this.index();
 	}
 });
