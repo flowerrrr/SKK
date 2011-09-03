@@ -12,20 +12,20 @@ Ext.regController('Games', {
 	},
 
     newForm: function() {
-		var model = new App.models.Game({ init: true });
+		var model = new App.models.Game({ nr: this.store.getNextGameNr() });
 		App.views.gamesForm.load(model);
         App.views.viewport.reveal('gamesForm');
     },
 	
 	save: function(params) {
 		params.record.setValues(params.data);
-		this.store.create(params.record);
+		this.store.create(params.record.data);
 		this.index();
 	},
 
 	update: function(params) {
 		params.record.setValues(params.data);
-		App.scoreboard.clearCache(params.record.data.id);
+		App.scoreboard.clearCache(params.record.data.nr);
 		params.record.save();
 		this.index();
 	}

@@ -10,15 +10,27 @@ App = new Ext.Application({
         this.views.gamesForm = this.views.viewport.down('#gamesForm');
 		this.views.tablesForm = this.views.viewport.down('#tablesForm');
 		
-        Ext.dispatch({
-            controller: 'Games',
-            action: 'newForm'
-        });
+		var developingForm = true;
+		if (developingForm) {
+			Ext.dispatch({
+				controller: 'Games',
+				action: 'newForm'
+			});
+		}
 
-		
 	}
 });
 
 App.isNumber = function(n) {
   return !isNaN(parseFloat(n)) && isFinite(n);
+}
+
+window.onerror = errorHandler; 
+
+function errorHandler(message, errorURL, lineNumber) {
+	var outputMessage =
+	"Message: " + message +
+	"\nURL: " + errorURL +
+	"\nLine Number: " + lineNumber;
+	alert(outputMessage);
 }

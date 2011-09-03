@@ -14,6 +14,8 @@ Ext.regController('Tables', {
 	update: function(params) {
 		params.record.set(params.data);
 		params.record.save();
+		this.store.notifyListeners(params.record);
 		this.index();
 	}
 });
+

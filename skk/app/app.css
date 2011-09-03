@@ -48,6 +48,11 @@
 	padding-left: 20px;
 }
 
+.numberfield-disabled input {
+	color: #000;
+	background-color: #FFF;
+}
+
 .score-panel {
 	margin-top: 10px;
 }

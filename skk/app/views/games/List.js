@@ -27,20 +27,6 @@ App.views.GamesList = Ext.extend(Ext.Panel, {
             items: [ actionButton, { xtype: 'spacer' }, addButton ]
         };
 
-        playerbar = {
-            dock: 'top',
-            xtype: 'panel',
-            html: (function() {
-				var s = '<div class="x-list-header">';
-				for(var i = 1; i <= 4; i++) {
-					var player = App.stores.tables.getAt(0).data['p' + i];
-					s += '<div class="score p' + i + ' header">' + player + '</div>';
-				}
-				s += '</div>';
-				return s;
-			})(),
-        };
-
         list = {
             xtype: 'list',
             itemTpl: new Ext.XTemplate('<tpl for="[1,2,3,4]"><div class="score p{#}">{[App.scoreboard.getPlayerScore(xindex, parent)]}</div></tpl>'),
@@ -67,11 +53,19 @@ App.views.GamesList = Ext.extend(Ext.Panel, {
 			getHeader: function() {
 				var s = '';
 				for(var i = 1; i <= 4; i++) {
-					var player = App.stores.tables.getAt(0).data['p' + i];
-					s += '<div class="score p' + i + ' header">' + player + '</div>';
+					var player = App.stores.tables.getAt(0).getPlayer(i);
+					s += '<div id="header-p' + i + '" class="score p' + i + ' header">' + player + '</div>';
 				}
 				s += '<div style="clear:both;" ></div>';
 				return s;
+			},
+			updateHeader: function(rec) {
+				for(var i = 1; i <= 4; i++) {
+					var el = Ext.get('header-p' + i);
+					if (el) {
+						el.setHTML(rec.getPlayer(i));
+					}
+				}
 			},
         };
 		
@@ -83,6 +77,8 @@ App.views.GamesList = Ext.extend(Ext.Panel, {
             dockedItems: [titlebar],
             items: [list]
         });
+		
+		App.stores.tables.addModelListener(list.updateHeader);
 
         App.views.GamesList.superclass.initComponent.call(this);
     },
@@ -95,7 +91,7 @@ App.views.GamesList = Ext.extend(Ext.Panel, {
     },
 	
 	onActionAction: function() {
-		actionSheet.show();
+		App.views.actionSheet.show();
 	},
 	
 	onItemTapAction: function(list, index, item, e) {
@@ -143,8 +139,7 @@ App.views.ActionSheet = Ext.extend(Ext.ActionSheet, {
 		Ext.Msg.confirm('Achtung', 'Alle Spiele l&ouml;schen?', function(button) {
 			sheet.hide();
 			if(button == 'yes') {
-				App.stores.games.each(function(rec) { App.stores.games.remove(rec); });
-				App.stores.games.sync();
+				App.stores.games.clearAll();
 			}
 		});
 	},
@@ -158,7 +153,8 @@ App.views.ActionSheet = Ext.extend(Ext.ActionSheet, {
 	}
 });
 
-var actionSheet = new App.views.ActionSheet();
+App.views.actionSheet = new App.views.ActionSheet();
 
 
 Ext.reg('App.views.GamesList', App.views.GamesList);
+

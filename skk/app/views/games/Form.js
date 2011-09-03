@@ -34,20 +34,26 @@ App.views.GamesForm = Ext.extend(Ext.form.FormPanel, {
 						type: 'hbox',
 					},
 					items: [ { 
-						label: App.stores.tables.getAt(0).data['p' + nr],
+						id: 'playerName' + nr,
+						label: App.stores.tables.getAt(0).getPlayer(nr),
 						labelWidth: '50%',
 						xtype: 'checkboxfield',
 						name: 'player_' + nr,
 						cls: 'checkboxfield',
 						listeners: {
-							check: function() { form.onPlayerChanged(nr) },
-							uncheck: function() { form.onPlayerChanged(nr) },
+							check: function() { form.onPlayerChanged(nr, true) },
+							uncheck: function() { form.onPlayerChanged(nr, false) },
 						},
 					},
 					{
+						id: 'amount_' + nr,
 						xtype: 'numberfield',
 						name: 'amount_' + nr,
 						cls: 'numberfield',
+						disabledCls: 'numberfield-disabled',
+						listeners: {
+							keyup: function() { form.onAmountChanged(nr) },
+						},
 					}
 					]};
 			}
@@ -59,7 +65,24 @@ App.views.GamesForm = Ext.extend(Ext.form.FormPanel, {
 			return items;
 		};
 		
-		fields = [
+		var gameDataListItem = {
+				id: 'gameDataList',
+				cls: 'game-data-list',
+				items: gameDataList(this),
+				updatePlayer: function(rec) {
+					for(var i = 1; i <= 4; i++) {
+						var el = Ext.getCmp('playerName' + i);
+						if (el.labelEl) {
+							el.labelEl.setHTML(rec.getPlayer(i));
+						} else {
+							el.label = rec.getPlayer(i);
+						}
+					}
+				},
+			};
+
+		
+		var fields = [
 			{
 				xtype: 'hiddenfield',
 				name: 'type'
@@ -106,12 +129,11 @@ App.views.GamesForm = Ext.extend(Ext.form.FormPanel, {
 					id: 'winLoseFalse',
 					value: 'LOSS'
 				}]
+
 			},
+			gameDataListItem,
 			{
-				cls: 'game-data-list',
-				items: gameDataList(this)
-			},
-			{
+				id: 'score',
 				xtype: 'numberfield',
 				name: 'score',
 				label: 'Spielwert',
@@ -128,6 +150,8 @@ App.views.GamesForm = Ext.extend(Ext.form.FormPanel, {
             dockedItems: [ titlebar ],
 			items: [ fields ]
         });
+		
+		App.stores.tables.addModelListener(gameDataListItem.updatePlayer);
 
         App.views.GamesForm.superclass.initComponent.call(this);
     },
@@ -195,7 +219,22 @@ App.views.GamesForm = Ext.extend(Ext.form.FormPanel, {
 		this.setValues({
 			type: btn.id
 		});
-		Ext.getCmp('winLoseButtons').setDisabled(this.getValues().type == 'RAMSCH');
+		var visible = this.getValues().type != 'RAMSCH';
+		Ext.getCmp('winLoseButtons').setVisible(visible);
+		var scoreCmp = Ext.getCmp('score');
+		scoreCmp.setVisible(visible);
+		// preset score if empty
+		var score = parseInt(scoreCmp.getValue());
+		if (isNaN(score) || score <= 0) {
+			score = App.stores.tables.rates[this.getValues().type];
+			if (visible) {
+				scoreCmp.setValue(score);
+			} else {
+			}
+		}
+		// if ramsch clear all amounts
+		this.clearScores();
+		
 		this.updateForm();
 		
 	},
@@ -205,9 +244,27 @@ App.views.GamesForm = Ext.extend(Ext.form.FormPanel, {
 		this.updateForm();
 	},
 	
-	onPlayerChanged: function(nr) {
+	onPlayerChanged: function(nr, checked) {
 		if (this.cancelEvent) return;
 		console.log('onPlayerChanged');
+		if (checked) {
+			this.cancelEvent = true;
+			if (this.getValues().type != 'SAUSPIEL') {
+				// uncheck previously selected player
+				for (var i = 1; i <= 4; i++) {
+					if (i != nr) {
+						var el = Ext.getCmp('playerName' + i);
+						el.uncheck();
+					}
+				}
+			}
+			this.cancelEvent = false;
+		}
+		this.updateForm();
+	},
+	
+	onAmountChanged: function(nr) {
+		console.log('onAmountChanged');
 		this.updateForm();
 	},
 	
@@ -240,8 +297,18 @@ App.views.GamesForm = Ext.extend(Ext.form.FormPanel, {
 	updateForm: function() {
 		var valid = this.validateForm();
 		Ext.getCmp('formSaveButton').setDisabled(!valid);
+		
+		// enable player score fields if in RAMSCH
+		var ramsch = this.getValues().type == 'RAMSCH';
+		for (var i = 1; i <= 4; i++) {
+			var cmp = Ext.getCmp('amount_' + i);
+			cmp.setDisabled(!ramsch);
+		}
 
 		if (!valid) {
+			if (!ramsch) 
+				// clear player amount
+				this.clearScores();
 			return;
 		}
 		var model = new App.models.Game();
@@ -253,9 +320,18 @@ App.views.GamesForm = Ext.extend(Ext.form.FormPanel, {
 			model.updateScores();
 			break;
 		case 'RAMSCH':
-			alert('not implemented');
+			model.updateRamschScores();
 		}
 		this.pushModel(model);
+	},
+	
+	clearScores: function() {
+		this.setValues( { 
+			amount_1: '',
+			amount_2: '',
+			amount_3: '',
+			amount_4: '',
+		});
 	},
 	
 	validateForm: function() {
@@ -271,7 +347,9 @@ App.views.GamesForm = Ext.extend(Ext.form.FormPanel, {
 			return (isValidPlayers && model.isValidScore() && model.getWin() != "");
 		} else if (model.getType() == 'RAMSCH') {
 			isValidPlayers = model.getNumPlayers() == 1;
-			return (isValidPlayers && notimplemented());
+			// im RAMSCH müssen die Gewinne der Siegerspieler eingetragen werden.
+			var isValidScore = model.isValidRamschScore();
+			return (isValidPlayers && isValidScore);
 		} else {
 			return false;
 		}

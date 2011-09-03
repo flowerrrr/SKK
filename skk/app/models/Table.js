@@ -31,6 +31,10 @@ App.models.Table = Ext.regModel('Table', {
         id: 'sencha-table'
     },
 	
+	getPlayer: function(i) {
+		return this.data['p' + i];
+	},
+	
 	
 	
 });
