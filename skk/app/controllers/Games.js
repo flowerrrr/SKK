@@ -1,8 +1,14 @@
 Ext.regController('Games', {
 	store: App.stores.games,
-
-    index: function() {
+	
+    index: function(params) {
+		// scroll to end of list
         App.views.viewport.reveal('gamesList');
+		if (params.scrollToBottom) {
+			var list = Ext.getCmp('gamesListList');
+			list.scroller.updateBoundary();
+			list.scroller.scrollTo({x: 0, y:list.scroller.size.height}, true);
+		}
     },
 	
 	editForm: function(params) {
@@ -20,13 +26,13 @@ Ext.regController('Games', {
 	save: function(params) {
 		params.record.setValues(params.data);
 		this.store.create(params.record.data);
-		this.index();
+		this.index({ scrollToBottom: true });
 	},
 
 	update: function(params) {
 		params.record.setValues(params.data);
 		App.scoreboard.clearCache(params.record.data.nr);
 		params.record.save();
-		this.index();
+		this.index({ scrollToBottom: true });
 	}
 });

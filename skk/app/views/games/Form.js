@@ -204,7 +204,9 @@ App.views.GamesForm = Ext.extend(Ext.form.FormPanel, {
 			// set checkbox
 			if (gameData.data.isPlayer == true) {
 				el.items.getAt(0).check();
-			} 
+			}  else {
+				el.items.getAt(0).uncheck();
+			}
 			// set amount
 			el.items.getAt(1).setValue(gameData.data.amount);
 		};
