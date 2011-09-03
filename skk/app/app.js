@@ -10,7 +10,7 @@ App = new Ext.Application({
         this.views.gamesForm = this.views.viewport.down('#gamesForm');
 		this.views.tablesForm = this.views.viewport.down('#tablesForm');
 		
-		var developingForm = true;
+		var developingForm = false;
 		if (developingForm) {
 			Ext.dispatch({
 				controller: 'Games',
