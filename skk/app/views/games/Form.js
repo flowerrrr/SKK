@@ -230,6 +230,8 @@ App.views.GamesForm = Ext.extend(Ext.form.FormPanel, {
 		});
 		this.showHideComponents();
 		// preset score if empty
+		var visible = this.getValues().type != 'RAMSCH';
+		var scoreCmp = Ext.getCmp('score');
 		var score = parseInt(scoreCmp.getValue());
 		if (isNaN(score) || score <= 0) {
 			score = App.stores.tables.rates[this.getValues().type];
