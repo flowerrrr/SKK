@@ -22,6 +22,7 @@
 	width: 25%;
 	float: left;
 	text-align: center;
+	padding: 0px 2px;
 }
 
 .ellipsis, .x-form-label {

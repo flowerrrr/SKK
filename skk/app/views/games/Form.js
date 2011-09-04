@@ -50,6 +50,7 @@ App.views.GamesForm = Ext.extend(Ext.form.FormPanel, {
 						xtype: 'numberfield',
 						name: 'amount_' + nr,
 						cls: 'numberfield',
+						maxLength: 4,
 						disabledCls: 'numberfield-disabled',
 						listeners: {
 							keyup: function() { form.onAmountChanged(nr) },
@@ -138,6 +139,7 @@ App.views.GamesForm = Ext.extend(Ext.form.FormPanel, {
 				name: 'score',
 				label: 'Spielwert',
 				labelWidth: '50%',
+				maxLength: 4,
 				cls: 'score-panel',
 				listeners: {
 					change: function() { this.ownerCt.onScoreChanged() },
