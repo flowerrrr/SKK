@@ -35,6 +35,14 @@ App.models.Table = Ext.regModel('Table', {
 		return this.data['p' + i];
 	},
 	
+	getPlayers: function() {
+		var data = [];
+		for(var i = 1; i <= 4; i++) {
+			data.push(this.getPlayer(i));
+		}
+		return data;
+	},
+	
 	
 	
 });

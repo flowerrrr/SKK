@@ -1,7 +1,7 @@
 App.views.GamesList = Ext.extend(Ext.Panel, {
 
 	initComponent: function(){
-        var actionButton, addButton, titlebar, playerbar, list;
+        var actionButton, addButton, titlebar, playerbar, list, listHeader;
 		
 		actionButton = {
 			itemId: 'actionButton',
@@ -27,6 +27,25 @@ App.views.GamesList = Ext.extend(Ext.Panel, {
             title: 'Schafkopf Kasse',
             items: [ actionButton, { xtype: 'spacer' }, addButton ]
         };
+		
+		listHeader = {
+			tpl:  new Ext.XTemplate(
+				'<tpl for=".">',
+					'<div id="header-p{#}" class="score p{#} header">{[values]}</div>',
+				'</tpl>',
+				'<div style="clear:both;" ></div>'
+			),
+			data: App.stores.tables.getAt(0).getPlayers(),
+			updateHeader: function(rec) {
+				for(var i = 1; i <= 4; i++) {
+					var el = Ext.get('header-p' + i);
+					if (el) {
+						el.setHTML(rec.getPlayer(i));
+					}
+				}
+			},
+			cls: 'x-list-header',
+		},
 
         list = {
 			id: 'gamesListList',
@@ -42,46 +61,16 @@ App.views.GamesList = Ext.extend(Ext.Panel, {
 				   cmp.refresh();
 				}				
 			},
-			grouped: true,
-			groupTpl : [
-				'<tpl for=".">',
-					'<div class="x-list-group x-group-{id}">',
-						'<h3 class="x-list-header">{[App.getListHeader()]}</h3>',
-						'<div class="x-list-group-items">',
-							'{items}',
-						'</div>',
-					'</div>',
-				'</tpl>',
-			],
-			getHeader: function() {
-				var s = '';
-				for(var i = 1; i <= 4; i++) {
-					var player = App.stores.tables.getAt(0).getPlayer(i);
-					s += '<div id="header-p' + i + '" class="score p' + i + ' header">' + player + '</div>';
-				}
-				s += '<div style="clear:both;" ></div>';
-				return s;
-			},
-			updateHeader: function(rec) {
-				for(var i = 1; i <= 4; i++) {
-					var el = Ext.get('header-p' + i);
-					if (el) {
-						el.setHTML(rec.getPlayer(i));
-					}
-				}
-			},
         };
 		
-		App.getListHeader = list.getHeader;
-
         Ext.apply(this, {
             html: 'If you see this something is wrong.',
             layout: 'fit',
-            dockedItems: [titlebar],
+            dockedItems: [titlebar, listHeader],
             items: [list]
         });
 		
-		App.stores.tables.addModelListener(list.updateHeader);
+		App.stores.tables.addModelListener(listHeader.updateHeader);
 
         App.views.GamesList.superclass.initComponent.call(this);
 		
