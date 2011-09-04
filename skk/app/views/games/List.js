@@ -31,7 +31,7 @@ App.views.GamesList = Ext.extend(Ext.Panel, {
 		listHeader = {
 			tpl:  new Ext.XTemplate(
 				'<tpl for=".">',
-					'<div id="header-p{#}" class="score p{#} header">{[values]}</div>',
+					'<div id="header-p{#}" class="score ellipsis p{#} header">{[values]}</div>',
 				'</tpl>',
 				'<div style="clear:both;" ></div>'
 			),
@@ -50,7 +50,7 @@ App.views.GamesList = Ext.extend(Ext.Panel, {
         list = {
 			id: 'gamesListList',
             xtype: 'list',
-            itemTpl: new Ext.XTemplate('<tpl for="[1,2,3,4]"><div class="score p{#}">{[App.scoreboard.getPlayerScore(xindex, parent)]}</div></tpl>'),
+            itemTpl: new Ext.XTemplate('<tpl for="[1,2,3,4]"><div class="score ellipsis p{#}">{[App.scoreboard.getPlayerScore(xindex, parent)]}</div></tpl>'),
 			emptyText: '<div class="emptyText">Klicken Sie auf + um ein neues Spiel einzutragen.</div>',
 			selectedItemCls: '',
             store: App.stores.games,

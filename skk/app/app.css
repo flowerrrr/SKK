@@ -17,6 +17,19 @@
 	padding: 0.4em 1.0em;
 }
 
+
+.score {
+	width: 25%;
+	float: left;
+	text-align: center;
+}
+
+.ellipsis, .x-form-label {
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space:nowrap;
+}
+
 /* action sheet */
 
 .x-sheet {
@@ -36,18 +49,16 @@
 
 /* game form */
 
-.score {
-	width: 25%;
-	float: left;
-	text-align: center;
-}
-
 .game-type-buttons, .win-lose-buttons {
 	margin-bottom: 10px;
 }
 
 .game-type-buttons  .x-button {
 	width: 33.333%;
+}
+
+.game-type-buttons  .x-button-label {
+	text-overflow: clip;
 }
 
 .win-lose-buttons .x-button {
