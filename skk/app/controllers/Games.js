@@ -4,10 +4,15 @@ Ext.regController('Games', {
     index: function(params) {
 		// scroll to end of list
         App.views.viewport.reveal('gamesList');
-		if (params && params.scrollToBottom) {
+		if (params) {
 			var list = Ext.getCmp('gamesListList');
-			list.scroller.updateBoundary();
-			list.scroller.scrollTo({x: 0, y:list.scroller.size.height}, true);
+			if(params.scrollToBottom) {
+				list.scroller.updateBoundary();
+				list.scroller.scrollTo({x: 0, y:list.scroller.size.height}, true);
+			}
+			if (params.refresh) {
+				list.refresh();
+			}
 		}
     },
 	
@@ -30,9 +35,11 @@ Ext.regController('Games', {
 	},
 
 	update: function(params) {
+		this.store.suspendEvents();
 		params.record.setValues(params.data);
 		App.scoreboard.clearCache(params.record.data.nr);
 		params.record.save();
-		this.index();
+		this.store.resumeEvents();
+		this.index({ refresh: true });
 	}
 });
