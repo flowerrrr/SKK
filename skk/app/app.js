@@ -1,4 +1,4 @@
-var debug = true;
+var debug = false;
 if (debug) {
 	Ext.is.iOS = true;
 	Ext.is.Desktop = false;
