@@ -212,8 +212,15 @@ App.views.GamesForm = Ext.extend(Ext.form.FormPanel, {
 		};
 		
 		for(var i = 1; i <= 4; i++) { updateGameData(i); }
-
 		
+		this.showHideComponents();
+	},
+	
+	showHideComponents: function() {
+		var visible = this.getValues().type != 'RAMSCH';
+		Ext.getCmp('winLoseButtons').setVisible(visible);
+		var scoreCmp = Ext.getCmp('score');
+		scoreCmp.setVisible(visible);
 	},
 	
 	onGameTypeHandler: function(btn, evt) {
@@ -221,10 +228,7 @@ App.views.GamesForm = Ext.extend(Ext.form.FormPanel, {
 		this.setValues({
 			type: btn.id
 		});
-		var visible = this.getValues().type != 'RAMSCH';
-		Ext.getCmp('winLoseButtons').setVisible(visible);
-		var scoreCmp = Ext.getCmp('score');
-		scoreCmp.setVisible(visible);
+		this.showHideComponents();
 		// preset score if empty
 		var score = parseInt(scoreCmp.getValue());
 		if (isNaN(score) || score <= 0) {
@@ -240,6 +244,7 @@ App.views.GamesForm = Ext.extend(Ext.form.FormPanel, {
 		this.updateForm();
 		
 	},
+	
 	
 	onScoreChanged: function() {
 		console.log('onScoreChanged');

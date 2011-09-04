@@ -1,5 +1,12 @@
+var debug = true;
+if (debug) {
+	Ext.is.iOS = true;
+	Ext.is.Desktop = false;
+}
+
 App = new Ext.Application({
     name: "SKK",
+	icon: 'img/favicon.png',
 
     launch: function() {
 		App.stores.tables.init();
