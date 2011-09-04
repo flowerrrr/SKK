@@ -15,10 +15,14 @@
 
 /* action sheet */
 
+.x-sheet {
+	padding: 1.1em;
+}
+
 .x-sheet .x-sheet-body .x-button {
 	padding-top: 0.4em;
-	padding-bottom: 0.4em;
-	border: 2px;
+	padding-bottom: 0.5em;
+	border-width: 2px;
 }
 
 .x-sheet .x-sheet-body .x-button:last-child {
