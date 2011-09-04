@@ -138,6 +138,14 @@ App.views.ActionSheet = Ext.extend(Ext.ActionSheet, {
         App.views.ActionSheet.superclass.initComponent.call(this);
 	
 	},
+	
+	listeners: {
+		beforeshow: function() {
+			var el = this.items.getAt(0);
+			(App.stores.games.data.length == 0) ? el.hide() : el.show();
+		}
+	},
+	
 
 	onClearAllDataHandler: function(btn, evt) {
 		Ext.Msg.confirm('Achtung', 'Alle Spiele l&ouml;schen?', function(button) {
