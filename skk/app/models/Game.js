@@ -169,7 +169,7 @@ App.models.Game = Ext.regModel('Game', {
 			}
 		});
 		var p = this.getPlayer()[0];
-		p.setAmount(score);
+		p.setAmount(-1 * score);
 	},
 	
 	setValues: function(values) {
