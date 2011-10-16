@@ -7,7 +7,8 @@ if (debug) {
 App = new Ext.Application({
     name: "SKK",
 	icon: 'img/favicon.png',
-
+	phoneStartupScreen: 'img/phone_startup.png',
+	
     launch: function() {
 		App.stores.tables.init();
 
