@@ -25,7 +25,12 @@ App.GameCache = Ext.extend(Object, {
 				this.cache.removeByKey(key);
 			}
 		}
-	}
+	},
+	
+	clearAll: function() {
+		console.log("Resetting scoreboard game cache.");
+		this.cache = new Ext.util.HashMap();
+	},
 });
 
 App.ScoreBoard = Ext.extend(Object, {
@@ -80,7 +85,12 @@ App.ScoreBoard = Ext.extend(Object, {
 	// clears cache for all games where id >= gameNr
 	clearCache: function(gameNr) {
 		this.cache.clear(gameNr);
-	}
+	},
+	
+	
+	clearAll: function() {
+		this.cache.clearAll();
+	},
 });
 
 App.scoreboard = new App.ScoreBoard();

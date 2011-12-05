@@ -141,6 +141,7 @@ App.views.ActionSheet = Ext.extend(Ext.ActionSheet, {
 			sheet.hide();
 			if(button == 'yes') {
 				App.stores.games.clearAll();
+				App.scoreboard.clearAll();
 			}
 		});
 	},
