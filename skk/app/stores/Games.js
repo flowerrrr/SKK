@@ -20,7 +20,6 @@ App.stores.games = new Ext.data.Store({
 		this.each(function(rec) { 
 			me.remove(rec); 
 		});
-		this.currentGameNr = 0;
 		this.sync();
 	},
 });
